@@ -129,6 +129,8 @@ button{font-family:inherit; cursor:pointer;}
   .nav-links.open{transform:translateX(0);}
   .nav-links a{color:var(--ivory); font-family:var(--serif); font-size:1.3rem;}
   .nav-toggle{display:block; z-index:1001;}
+  .nav-toggle.open span,
+  .nav.scrolled .nav-toggle.open span{background:var(--ivory);}
 }
 
 /* ============ HERO ============ */

@@ -51,7 +51,7 @@
   document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
 
   /* ---------- COUNTDOWN ---------- */
-  var WEDDING_DATE = new Date('2026-12-05T12:00:00');
+  var WEDDING_DATE = new Date('2026-12-05T12:00:00+01:00');
   function tick(){
     var now = new Date();
     var diff = WEDDING_DATE - now;
@@ -160,6 +160,26 @@
     clearTimeout(toastTimer);
     toastTimer = setTimeout(function(){ toastMsg.classList.remove('show'); }, 3200);
   }
+  function copyText(text){
+    if(navigator.clipboard && window.isSecureContext){
+      return navigator.clipboard.writeText(text);
+    }
+    return new Promise(function(resolve, reject){
+      var field = document.createElement('textarea');
+      field.value = text;
+      field.setAttribute('readonly','');
+      field.style.position = 'fixed';
+      field.style.opacity = '0';
+      document.body.appendChild(field);
+      field.select();
+      try{
+        document.execCommand('copy') ? resolve() : reject(new Error('Copy failed'));
+      }catch(error){
+        reject(error);
+      }
+      document.body.removeChild(field);
+    });
+  }
 
   /* ---------- ADD TO CALENDAR ---------- */
   document.getElementById('addCalendarBtn').addEventListener('click', function(){
@@ -182,11 +202,11 @@
   /* ---------- SHARE ---------- */
   var pageUrl = window.location.href;
   document.getElementById('whatsappShare').addEventListener('click', function(){
-    var text = encodeURIComponent("You're invited! #BENFOUNDGRACE2026 are getting married on 30th September 2026. View the invitation: " + pageUrl);
+    var text = encodeURIComponent("You're invited! #BENFOUNDGRACE2026 is celebrating Grace Ojima Otache and Benjamin Musa Baba's wedding on 5th December 2026. View the invitation: " + pageUrl);
     window.open('https://wa.me/?text=' + text, '_blank', 'noopener');
   });
   document.getElementById('copyLink').addEventListener('click', function(){
-    navigator.clipboard.writeText(pageUrl).then(function(){
+    copyText(pageUrl).then(function(){
       showToast('Invitation link copied.');
     }).catch(function(){
       showToast('Could not copy link — please copy the URL manually.');
@@ -196,11 +216,13 @@
     if(navigator.share){
       navigator.share({
         title: '#BENFOUNDGRACE2026 — Wedding Invitation',
-        text: "You're invited to celebrate #BENFOUNDGRACE2026's wedding, 30th September 2026.",
+        text: "You're invited to celebrate Grace Ojima Otache and Benjamin Musa Baba's wedding on 5th December 2026.",
         url: pageUrl
       }).catch(function(){});
     } else {
-      navigator.clipboard.writeText(pageUrl).then(function(){ showToast('Invitation link copied.'); });
+      copyText(pageUrl).then(function(){ showToast('Invitation link copied.'); }).catch(function(){
+        showToast('Could not copy link — please copy the URL manually.');
+      });
     }
   });
 
@@ -217,12 +239,16 @@
       audio.pause();
       soundToggle.classList.add('muted');
       soundToggle.setAttribute('aria-label','Play background music');
+      playing = false;
     } else {
-      audio.play().catch(function(){});
-      soundToggle.classList.remove('muted');
-      soundToggle.setAttribute('aria-label','Mute background music');
+      audio.play().then(function(){
+        soundToggle.classList.remove('muted');
+        soundToggle.setAttribute('aria-label','Mute background music');
+        playing = true;
+      }).catch(function(){
+        showToast('Background audio could not be played.');
+      });
     }
-    playing = !playing;
   });
 
 })();
