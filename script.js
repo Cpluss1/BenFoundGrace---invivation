@@ -74,7 +74,11 @@
     {src:'pic2.jpeg', h:220},
     {src:'pic3.jpeg', h:300},
     {src:'pic4.jpeg', h:240},
-    {src:'pic5.jpeg', h:260}
+    {src:'pic5.jpeg', h:260},
+    {src:'PIC10.jpeg', h:260},
+    {src:'PIC11.PNG', h:220},
+    {src:'PIC12.jpeg', h:300},
+    {src:'PIC13.jpeg', h:240}
   ];
   var masonry = document.getElementById('masonry');
   galleryData.forEach(function(item, idx){
@@ -206,23 +210,13 @@
     window.open('https://wa.me/?text=' + text, '_blank', 'noopener');
   });
   document.getElementById('copyLink').addEventListener('click', function(){
-    copyText(pageUrl).then(function(){
-      showToast('Invitation link copied.');
-    }).catch(function(){
-      showToast('Could not copy link — please copy the URL manually.');
-    });
+    copyText(pageUrl).then(function(){ showToast('Invitation link copied.'); }).catch(function(){ showToast('Could not copy link — please copy the URL manually.'); });
   });
   document.getElementById('genericShare').addEventListener('click', function(){
     if(navigator.share){
-      navigator.share({
-        title: '#BENFOUNDGRACE2026 — Wedding Invitation',
-        text: "You're invited to celebrate Grace Ojima Otache and Benjamin Musa Baba's wedding on 5th December 2026.",
-        url: pageUrl
-      }).catch(function(){});
+      navigator.share({ title: '#BENFOUNDGRACE2026 — Wedding Invitation', text: "You're invited to celebrate Grace Ojima Otache and Benjamin Musa Baba's wedding on 5th December 2026.", url: pageUrl }).catch(function(){});
     } else {
-      copyText(pageUrl).then(function(){ showToast('Invitation link copied.'); }).catch(function(){
-        showToast('Could not copy link — please copy the URL manually.');
-      });
+      copyText(pageUrl).then(function(){ showToast('Invitation link copied.'); }).catch(function(){ showToast('Could not copy link — please copy the URL manually.'); });
     }
   });
 
@@ -231,10 +225,7 @@
   var soundToggle = document.getElementById('soundToggle');
   var playing = false;
   soundToggle.addEventListener('click', function(){
-    if(!audio.src && !audio.querySelector('source')){
-      showToast('Add a music file to enable background audio.');
-      return;
-    }
+    if(!audio.src && !audio.querySelector('source')){ showToast('Add a music file to enable background audio.'); return; }
     if(playing){
       audio.pause();
       soundToggle.classList.add('muted');
@@ -245,9 +236,7 @@
         soundToggle.classList.remove('muted');
         soundToggle.setAttribute('aria-label','Mute background music');
         playing = true;
-      }).catch(function(){
-        showToast('Background audio could not be played.');
-      });
+      }).catch(function(){ showToast('Background audio could not be played.'); });
     }
   });
 
